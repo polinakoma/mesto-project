@@ -1,0 +1,12 @@
+.popup__container {
+    height: 100%;
+    display: flex;
+    margin-top: 195px;
+    justify-content: center;
+}
+
+@media screen and (max-width: 894px)  {
+    .popup__container {
+        margin-top: 123px;
+    }
+}

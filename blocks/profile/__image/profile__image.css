@@ -1,0 +1,7 @@
+@media screen and (max-width: 894px)  {
+    .profile__image {
+        min-width: 120px;
+        min-height: 120px;
+        margin: 0 auto;
+    }
+}
