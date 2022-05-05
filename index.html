@@ -11,6 +11,12 @@
 </head>
 <body class="page">
   <div class="page__container">
+  <!--Эту страницу я постаралась реализовать максимально похожей на макет. Здесь 
+    я имею в виду, что при использовании Pixel Perfect расхождения постаралась
+    оставить минимальные. О том, что необязательно строго использовать значения 
+    отступов нам говорил наставник. В приоритете, все же, остается максимальное 
+    сходство с макетом. Надеюсь, вы не посчитаете это ошибкой.
+    Все пути к картинкам поправила.-->
     <header class="header">
         <img class="header__logo" src="images/logo.svg" alt="Место"> 
     </header>
@@ -24,53 +30,55 @@
         </div>
         <button class="profile__add-button"></button>
       </section>
-      <section class="grid">
-          <div class="grid__item">
-            <img src="/images/karachaevsk.png" alt="Карачаевск">
+      <section>
+        <ul class="grid">
+          <li class="grid__item">
+            <img src="images/karachaevsk.png" alt="Карачаевск">
             <div class="grid__info">
               <h3 class="grid__title">Карачаевск</h3>
               <button class="grid__like-button"></button>
             </div>
-          </div>
-          <div class="grid__item">
-            <img src="/images/elbrus.png" alt="Эльбрус">
+          </li>
+          <li class="grid__item">
+            <img src="images/elbrus.png" alt="Эльбрус">
             <div class="grid__info">
               <h3 class="grid__title">Гора Эльбрус</h3>
               <button class="grid__like-button"></button>
             </div>
-          </div>
-          <div class="grid__item">
-            <img src="/images/dombay.png" alt="Домбай">
+          </li>
+          <li class="grid__item">
+            <img src="images/dombay.png" alt="Домбай">
             <div class="grid__info">
               <h3 class="grid__title">Домбай</h3>
               <button class="grid__like-button"></button>
             </div>
-          </div>
-          <div class="grid__item">
-            <img src="/images/elbrus.png" alt="Эльбрус">
+          </li>
+          <li class="grid__item">
+            <img src="images/elbrus.png" alt="Эльбрус">
             <div class="grid__info">
               <h3 class="grid__title">Гора Эльбрус</h3>
               <button class="grid__like-button"></button>
             </div>
-          </div>
-          <div class="grid__item">
-            <img src="/images/dombay.png" alt="Домбай">
+          </li>
+          <li class="grid__item">
+            <img src="images/dombay.png" alt="Домбай">
             <div class="grid__info">
               <h3 class="grid__title">Домбай</h3>
               <button class="grid__like-button"></button>
             </div>
-          </div>
-          <div class="grid__item">
-            <img src="/images/karachaevsk.png" alt="Карачаева-Черкессия"> 
+          </li>
+          <li class="grid__item">
+            <img src="images/karachaevsk.png" alt="Карачаева-Черкессия"> 
             <div class="grid__info">
               <h3 class="grid__title">Карачаево-Черкессия</h3>
               <button class="grid__like-button"></button>
             </div>
-          </div>
+          </li>
+        </ul>
       </section>
     </main>
     <footer>
-        <p class="footer">&copy; 2022 Mesto Russia</p>
+      <p class="footer">&copy; 2022 Mesto Russia</p>
     </footer>
   </div> 
   <div id="popup" class="popup">
