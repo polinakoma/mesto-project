@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="pages/index.css">
+  <meta name="keywords" content="место, жак-ив-кусто, исследователь океана">
+  <meta name="author" content="Полина Комарова">
+  <title>Место</title>
+</head>
+<body class="page">
+  <div class="page__container">
+  <!--Эту страницу я постаралась реализовать максимально похожей на макет. Здесь 
+    я имею в виду, что при использовании Pixel Perfect расхождения постаралась
+    оставить минимальные. О том, что необязательно строго использовать значения 
+    отступов нам говорил наставник. В приоритете, все же, остается максимальное 
+    сходство с макетом. Надеюсь, вы не посчитаете это ошибкой.
+    Все пути к картинкам поправила.-->
+    <header class="header">
+        <img class="header__logo" src="images/logo.svg" alt="Место"> 
+    </header>
+    <main>
+      <section class="profile">
+        <img class="profile__image" src="images/profile_image.png" alt="Фото Жак-Ив Кусто">
+        <div class="profile__info">
+          <h2 class="profile__name">Жак-Ив Кусто</h2>
+          <button class="profile__edit-button"></button>
+          <p class="profile__description"> Исследователь океана</p>
+        </div>
+        <button class="profile__add-button"></button>
+      </section>
+      <section>
+        <ul class="grid">
+          <li class="grid__item">
+            <img src="images/karachaevsk.png" alt="Карачаевск">
+            <div class="grid__info">
+              <h3 class="grid__title">Карачаевск</h3>
+              <button class="grid__like-button"></button>
+            </div>
+          </li>
+          <li class="grid__item">
+            <img src="images/elbrus.png" alt="Эльбрус">
+            <div class="grid__info">
+              <h3 class="grid__title">Гора Эльбрус</h3>
+              <button class="grid__like-button"></button>
+            </div>
+          </li>
+          <li class="grid__item">
+            <img src="images/dombay.png" alt="Домбай">
+            <div class="grid__info">
+              <h3 class="grid__title">Домбай</h3>
+              <button class="grid__like-button"></button>
+            </div>
+          </li>
+          <li class="grid__item">
+            <img src="images/elbrus.png" alt="Эльбрус">
+            <div class="grid__info">
+              <h3 class="grid__title">Гора Эльбрус</h3>
+              <button class="grid__like-button"></button>
+            </div>
+          </li>
+          <li class="grid__item">
+            <img src="images/dombay.png" alt="Домбай">
+            <div class="grid__info">
+              <h3 class="grid__title">Домбай</h3>
+              <button class="grid__like-button"></button>
+            </div>
+          </li>
+          <li class="grid__item">
+            <img src="images/karachaevsk.png" alt="Карачаева-Черкессия"> 
+            <div class="grid__info">
+              <h3 class="grid__title">Карачаево-Черкессия</h3>
+              <button class="grid__like-button"></button>
+            </div>
+          </li>
+        </ul>
+      </section>
+    </main>
+    <footer>
+      <p class="footer">&copy; 2022 Mesto Russia</p>
+    </footer>
+  </div> 
+  <div id="popup" class="popup">
+    <div class="popup__container">
+      <div class="popup__content">
+        <a href="#" class="popup__exit"></a>
+        <h2 class="popup__title">Редактировать профиль</h2>
+        <input type="text" class="popup__input">
+        <input type="text" class="popup__input">
+        <button class="popup__button">Сохранить</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
