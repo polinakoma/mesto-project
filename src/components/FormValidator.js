@@ -2,9 +2,13 @@ export class FormValidator {
   #settings;
   #formElement;
 
-  constructor(outerSettings, formElement) {
+  constructor(outerSettings, formElement, buttonElement) {
     this.#settings = outerSettings;
     this.#formElement = formElement;
+    this._inputList = this._inputList = Array.from(
+      this.#formElement.querySelectorAll(this.#settings.inputSelector)
+    );
+    this._buttonElement = document.querySelector(buttonElement);
   }
 
   #showInputError(inputElement, errorMessage) {
@@ -33,39 +37,35 @@ export class FormValidator {
     }
   }
 
-  #hasInvalidInput(inputList) {
-    return inputList.some((inputElement) => {
-      console.log(inputElement.validity.valid)
+  #hasInvalidInput() {
+    return this._inputList.some((inputElement) => {
       return !inputElement.validity.valid;
       
     });
   }
 
-  #toggleButtonState(inputList, buttonElement) {
-    if (this.#hasInvalidInput(inputList)) {
-      buttonElement.classList.add(this.#settings.inactiveButtonClass);
-      buttonElement.setAttribute("disabled", true);
+  #toggleButtonState() {
+    if (this.#hasInvalidInput()) {
+      this._buttonElement.classList.add(this.#settings.inactiveButtonClass);
+      this._buttonElement.setAttribute("disabled", true);
     } else {
-      buttonElement.classList.remove(this.#settings.inactiveButtonClass);
-      buttonElement.removeAttribute("disabled");
+      this._buttonElement.classList.remove(this.#settings.inactiveButtonClass);
+      this._buttonElement.removeAttribute("disabled");
     }
   }
 
   #setEventListeners() {
-    const inputList = Array.from(
-      this.#formElement.querySelectorAll(this.#settings.inputSelector)
-    );
-    const buttonElement = this.#formElement.querySelector(
+    this._buttonElement = this.#formElement.querySelector(
       this.#settings.submitButtonSelector
     );
-    this.#toggleButtonState(inputList, buttonElement);
+    this.#toggleButtonState();
 
-    inputList.forEach((inputElement) => {
+    this._inputList.forEach((inputElement) => {
       inputElement.addEventListener("input", () => {
         this.#isValid(inputElement);
         inputElement.classList.add(this.#settings.inputTypingClass);
 
-        this.#toggleButtonState(inputList, buttonElement);
+        this.#toggleButtonState();
       });
     });
   }

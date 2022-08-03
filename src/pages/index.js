@@ -141,7 +141,8 @@ const editAvatarPopup = new PopupWithForm({
 
 const avatarFormValidator = new FormValidator(
   validationConfig,
-  document.forms.avatar
+  document.forms.avatar,
+  '#avatar_profile_exit'
 );
 
 avatarFormValidator.enableValidation();
@@ -156,11 +157,6 @@ myFoto.addEventListener("click", function () {
   editAvatarPopup.open();
 });
 
-//avatarForm.addEventListener('submit', changeAvatar)
-
-/*____________________________________________*/
-
-// валидация
 const editProfilePopup = new PopupWithForm({
   popupSelector: "#profile_popup",
   callbackSubmitForm: (data) => {
@@ -183,7 +179,8 @@ const editProfilePopup = new PopupWithForm({
 
 const profileFormValidator = new FormValidator(
   validationConfig,
-  document.forms.profile
+  document.forms.profile,
+  '#profile_submit-button'
 );
 
 profileFormValidator.enableValidation();
@@ -200,9 +197,7 @@ profileResetButton.addEventListener("click", function () {
   editProfilePopup.close();
 });
 
-/*____________________________________________*/
 
-// валидация
 const postCardPopup = new PopupWithForm({
   popupSelector: "#card_popup",
   callbackSubmitForm: (data) => {
@@ -212,7 +207,6 @@ const postCardPopup = new PopupWithForm({
       .then((data) => {
         cardsSection.addItem(getFullCard(data).createCard(data, profileId));
         postCardPopup.close();
-        // обресетить форму
       })
       .catch((err) => {
         console.log(err);
@@ -225,7 +219,8 @@ const postCardPopup = new PopupWithForm({
 
 const cardFormValidator = new FormValidator(
   validationConfig,
-  document.forms.card
+  document.forms.card,
+  '#cards-adding_popup_exit'
 );
 
 cardFormValidator.enableValidation();
