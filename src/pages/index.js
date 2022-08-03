@@ -1,19 +1,36 @@
-import './index.css'; 
+import "./index.css";
 
-//константы
-import { profilePopup, cardPopup, cardFormInput, profileForm, profileEditButton, profileAddButton, profileResetButton, 
-cardPopupExitButton, imagePopupExitButton, imagePopup, cardPopupInputLink, cardPopupInputTitle, cardsContainer, nameInput, 
-jobInput, nameInfo, jobInfo, initialCards, profileAvatar, avatarPopup, closeAvatarProfile, myFoto, avatarForm, 
-avatarInput, profileSubmitButton, cardSubmitButton, avatarSubmitButton } from '../utils/constans.js'
+import {
+  avatarForm,
+  avatarInput,
+  avatarPopup,
+  avatarSubmitButton,
+  cardFormInput,
+  cardPopup,
+  cardPopupExitButton,
+  cardPopupInputLink,
+  cardPopupInputTitle,
+  cardSubmitButton,
+  cardsContainer,
+  closeAvatarProfile,
+  imagePopup,
+  imagePopupExitButton,
+  initialCards,
+  jobInfo,
+  jobInput,
+  myFoto,
+  nameInfo,
+  nameInput,
+  profileAddButton,
+  profileAvatar,
+  profileEditButton,
+  profileForm,
+  profilePopup,
+  profileResetButton,
+  profileSubmitButton,
+  validationConfig,
+} from "../utils/Constans.js";
 
-//закрытие модальных окон
-import { openPopup, closePopup, closePopupByOverlay, closePopupByEscape } from '../components/modal.js';
-
-// валидация формы
-import { validationConfig, showInputError, hideInputError, isValid, setEventListeners, hasInvalidInput,
-  toggleButtonState, enableValidation, disableButton } from '../components/validate.js';
-
-// рендеринг карточек
 import { Api } from "../components/Api.js";
 import { Card } from "../components/Card.js";
 import { FormValidator } from "../components/FormValidator.js";
@@ -22,8 +39,7 @@ import { PopupWithForm } from "../components/PopupWithForm.js";
 import { PopupWithImage } from "../components/PopupWithImage.js";
 import { Section } from "../components/Section.js";
 import { UserInfo } from "../components/UserInfo.js";
-import { data } from 'autoprefixer';
-
+import { data } from "autoprefixer";
 
 const api = new Api({
   url: "https://nomoreparties.co/v1/plus-cohort-13",
@@ -32,7 +48,6 @@ const api = new Api({
     "Content-Type": "application/json",
   },
 });
-
 
 const userInfo = new UserInfo({
   profileNameSelector: ".profile__name",
@@ -45,7 +60,26 @@ imagePopupExitButton.addEventListener("click", function () {
   popupZoomCard.close();
 });
 
+// заводим переменную
+let profileId;
 
+// единовременная загрузка данных карточек и пользователя
+api
+  .allUploadInfo()
+  .then(([cards, user]) => {
+    userInfo.setUserInfo(user);
+    userInfo.updateUserInfo();
+    // не забыть исправить аватар
+    myFoto.src = user.avatar;
+    profileId = user._id;
+
+    cardsSection.renderItems(cards);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+// формируем карточку, наполняем данными
 const getFullCard = (item) => {
   const card = new Card(
     item,
@@ -92,7 +126,7 @@ const getFullCard = (item) => {
   return card;
 };
 
-
+// размещвем картинки на странице
 const cardsSection = new Section(
   {
     renderer: function (item) {
@@ -104,150 +138,128 @@ const cardsSection = new Section(
   ".grid"
 );
 
+const popup = new Popup(".popup");
+popup.setEventListeners();
 
+/*____________________________________________*/
 
+// валидация
+const editAvatarPopup = new PopupWithForm({
+  popupSelector: "#avatar_popup",
+  callbackSubmitForm: (data) => {
+    editAvatarPopup.renderLoading(true);
+    api
+      .editAvatar(data)
 
-
-// Функция подтягивания информации со страницы
-function handleProfileFormInfo() {
-  nameInput.value = nameInfo.textContent;
-  jobInput.value = jobInfo.textContent;
-};
-
-const handleChangeLikeStatus = (cardId, isLiked, cardElement, userId) => {
-  api.changeLikeStatus(cardId, isLiked)
-  .then((dataFromServer) => {
-    updateLikes(cardElement, dataFromServer.likes, userId);
-  })
-  .catch((err) => {
-    console.log(`Лайк не поставлени. Ошибка ${err}`);
-  })
-}
-
-//Общая функция на рендер картинок
-const renderCard = function (data, container, userId) { 
-  const card = createCard(data, userId, handleChangeLikeStatus); 
-  container.prepend(card); 
-};
-
-let userId = null;
-
-api.allUploadInfo()
-.then(([cards, user]) => {
-  nameInfo.textContent = user.name;
-  jobInfo.textContent = user.about;
-  myFoto.src = user.avatar;
-  userId = user._id;
-
-  cards.forEach(function(item) {
-    renderCard(item, cardsContainer, userId)
-  })
-})
-.catch((err) => {
-  console.log(`Ошибка загрузки данных ${err}`);
+      .then((data) => {
+        profileAvatar.src = data.avatar;
+        editAvatarPopup.close();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        editAvatarPopup.renderLoading(false);
+      });
+  },
 });
 
-const renderLoading = function(isLoading, button) {
-  if(isLoading) {
-    button.textContent = 'Сохранение...';
-  } else {
-    button.textContent = 'Сохранить';
-  }
-}
+const avatarFormValidator = new FormValidator(
+  validationConfig,
+  document.forms.avatar
+);
 
-// Функция переписи значений в профайле
-function handleProfileFormSubmit (evt) {
-  evt.preventDefault(); 
-  renderLoading(true, profileSubmitButton);
-  api.editProfile({name: nameInput.value, about: jobInput.value})
-  .then((dataFromServer) => {
-    nameInfo.textContent = dataFromServer.name;
-    jobInfo.textContent =  dataFromServer.about;
-    closePopup(profilePopup);
-    console.log(`Данные ${dataFromServer.name} обновлены`)
-  })
-  .catch((err) => {
-    console.log(`Ошибка ${err}`);
-  })
-  .finally(() => {
-    renderLoading(false, profileSubmitButton);
-  })
-};
+avatarFormValidator.enableValidation();
 
-function changeAvatar() {
-  renderLoading(true, avatarSubmitButton);
-  disableButton(avatarSubmitButton, validationConfig);
-  api.editAvatar({ avatar: avatarInput.value})
-  .then((dataFromServer) => {
-    myFoto.src = avatarInput.value
-    console.log(`Ура! Новая аватарка ${dataFromServer.avatar}`)
-    avatarForm.reset()
-    closePopup(avatarPopup);
-  })
-  .catch((err) => {
-    console.log(err)
-  })
-  .finally(() => {
-    renderLoading(false, avatarSubmitButton);
-  })
-}
+editAvatarPopup.setEventListeners();
 
-const addCard = function(evt) {
-  renderLoading(true, cardSubmitButton);
-  disableButton(cardSubmitButton, validationConfig);
-  evt.preventDefault();
-  api.postCard({ name: cardPopupInputTitle.value, link: cardPopupInputLink.value, userId })
-  .then((dataFromServer) => {
-   renderCard(dataFromServer, cardsContainer, userId);
-   cardFormInput.reset();
-   closePopup(cardPopup);
-  })
-  .catch((err) => {
-    console.log(`Ошибка ${err}`);
-  })
-  .finally(() => {
-    renderLoading(false, cardSubmitButton)
-  })
-}
-
-//При нажатии на сохранить значения уйдут в профайл
-profileForm.addEventListener('submit', handleProfileFormSubmit);
-
-profileEditButton.addEventListener('click', function() {
-  openPopup(profilePopup);
-  handleProfileFormInfo();
+closeAvatarProfile.addEventListener("click", function () {
+  editAvatarPopup.close();
 });
 
-profileAddButton.addEventListener('click', function() {
-openPopup(cardPopup);
+myFoto.addEventListener("click", function () {
+  editAvatarPopup.open();
 });
 
-myFoto.addEventListener('click', function() {
-  openPopup(avatarPopup);
-  toggleButtonState(inputList, buttonElement, config)
-  });
+//avatarForm.addEventListener('submit', changeAvatar)
 
-profileResetButton.addEventListener('click', function() {
-  closePopup(profilePopup);
+/*____________________________________________*/
+
+// валидация
+const editProfilePopup = new PopupWithForm({
+  popupSelector: "#profile_popup",
+  callbackSubmitForm: (data) => {
+    editProfilePopup.renderLoading(true);
+    api
+      .editProfile(data)
+      .then((data) => {
+        userInfo.setUserInfo(data);
+        userInfo.updateUserInfo();
+        editProfilePopup.close();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        editProfilePopup.renderLoading(false);
+      });
+  },
 });
 
-cardPopupExitButton.addEventListener('click', function() {
-  closePopup(cardPopup);
+const profileFormValidator = new FormValidator(
+  validationConfig,
+  document.forms.profile
+);
+
+profileFormValidator.enableValidation();
+
+editProfilePopup.setEventListeners();
+
+profileEditButton.addEventListener("click", function () {
+  editProfilePopup.open();
+  const getUserInfo = userInfo.getUserInfo();
+  nameInput.value = getUserInfo.name;
+  jobInput.value = getUserInfo.about;
+});
+profileResetButton.addEventListener("click", function () {
+  editProfilePopup.close();
 });
 
-imagePopupExitButton.addEventListener('click', function() {
-  closePopup(imagePopup);
+/*____________________________________________*/
+
+// валидация
+const postCardPopup = new PopupWithForm({
+  popupSelector: "#card_popup",
+  callbackSubmitForm: (data) => {
+    postCardPopup.renderLoading(true);
+    api
+      .postCard(data)
+      .then((data) => {
+        cardsSection.addItem(getFullCard(data).createCard(data, profileId));
+        postCardPopup.close();
+        // обресетить форму
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        postCardPopup.renderLoading(false);
+      });
+  },
 });
 
-closeAvatarProfile.addEventListener('click', function() {
-  closePopup(avatarPopup);
+const cardFormValidator = new FormValidator(
+  validationConfig,
+  document.forms.card
+);
+
+cardFormValidator.enableValidation();
+
+postCardPopup.setEventListeners();
+
+profileAddButton.addEventListener("click", function () {
+  postCardPopup.open();
 });
-
-avatarForm.addEventListener('submit', changeAvatar)
-
-cardFormInput.addEventListener('submit', addCard);
-
-enableValidation(validationConfig);
-
-export { handleChangeLikeStatus }
-
+cardPopupExitButton.addEventListener("click", function () {
+  postCardPopup.close();
+});
