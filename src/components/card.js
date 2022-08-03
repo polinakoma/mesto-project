@@ -8,7 +8,7 @@ export class Card {
     this._name = name;
     this._link = link;
     this._likes = likes;
-    this._owner = owner._id;
+    this.owner = owner._id;
     this._id = _id;
 
     this._handleDeleteClick = handleDeleteClick;
@@ -55,8 +55,6 @@ export class Card {
     this._cardDeleteBin = this._card.querySelector(".grid__bin");
 
     if (this._userId !== this._owner) {
-      //console.log(this._userId)
-     // console.log(this._owner)
       this._cardDeleteBin.remove();
     }
   }

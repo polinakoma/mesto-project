@@ -19,7 +19,14 @@
   outline: none;
 }
 
+.popup__input_type:valid {
+  border-color: green;
+}
+
 .popup__input_type:invalid {
+  border-color: red;
+}
+.popup__input_type {
   border-color: red;
 }
 

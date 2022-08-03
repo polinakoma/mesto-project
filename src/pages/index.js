@@ -1,16 +1,33 @@
 import "./index.css";
 
 import {
+  avatarForm,
+  avatarInput,
+  avatarPopup,
+  avatarSubmitButton,
+  cardFormInput,
+  cardPopup,
   cardPopupExitButton,
+  cardPopupInputLink,
+  cardPopupInputTitle,
+  cardSubmitButton,
+  cardsContainer,
   closeAvatarProfile,
+  imagePopup,
   imagePopupExitButton,
+  initialCards,
+  jobInfo,
   jobInput,
   myFoto,
+  nameInfo,
   nameInput,
   profileAddButton,
   profileAvatar,
   profileEditButton,
+  profileForm,
+  profilePopup,
   profileResetButton,
+  profileSubmitButton,
   validationConfig,
 } from "../utils/Constans.js";
 
@@ -52,6 +69,7 @@ api
   .then(([cards, user]) => {
     userInfo.setUserInfo(user);
     userInfo.updateUserInfo();
+    // не забыть исправить аватар
     myFoto.src = user.avatar;
     profileId = user._id;
 
@@ -136,7 +154,6 @@ const editAvatarPopup = new PopupWithForm({
       .then((data) => {
         profileAvatar.src = data.avatar;
         editAvatarPopup.close();
-
       })
       .catch((err) => {
         console.log(err);
@@ -163,6 +180,8 @@ closeAvatarProfile.addEventListener("click", function () {
 myFoto.addEventListener("click", function () {
   editAvatarPopup.open();
 });
+
+//avatarForm.addEventListener('submit', changeAvatar)
 
 /*____________________________________________*/
 
