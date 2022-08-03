@@ -14,9 +14,8 @@ import { validationConfig, showInputError, hideInputError, isValid, setEventList
   toggleButtonState, enableValidation, disableButton } from '../components/validate.js';
 
 // рендеринг карточек
-import { handleClickImage, createCard, updateLikes } from '../components/card.js';
-
-// промисы на функционал карточек с сервера
+import { Card } from '../components/Card.js';
+import { Section } from '../components/Section.js';
 import { Api } from '../components/Api.js'
 import { data } from 'autoprefixer';
 
@@ -28,6 +27,65 @@ const api = new Api({
     "Content-Type": "application/json",
   },
 });
+
+
+const getFullCard = (item) => {
+  const card = new Card(
+    item,
+    {
+      handleZoomClick: () => {
+        popupZoomCard.open(item);
+      },
+
+      handleDeleteClick: () => {
+        api
+          .deleteCard(card.getCardId())
+          .then(() => {
+            card.removeCard();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+
+      handlePutLike: () => {
+        api
+          .putLike(card.getCardId())
+          .then((res) => {
+            card.likeCardOption(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+      handleDeleteLike: () => {
+        api
+          .deleteLike(card.getCardId())
+          .then((res) => {
+            card.likeCardOption(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+    },
+    "#card_template",
+    profileId
+  );
+  return card;
+};
+
+
+const cardsSection = new Section(
+  {
+    renderer: function (item) {
+      const initialCard = getFullCard(item);
+      const cardElement = initialCard.createCard(item, profileId);
+      cardsSection.addItem(cardElement);
+    },
+  },
+  ".grid"
+);
 
 
 
