@@ -33,6 +33,12 @@ export class FormValidator {
     }
   }
 
+  #hasInvalidInput(inputList) {
+    return inputList.some((inputElement) => {
+      return !inputElement.validity.valid;
+    });
+  }
+
   #toggleButtonState(inputList, buttonElement) {
     if (this.#hasInvalidInput(inputList)) {
       buttonElement.classList.add(this.#settings.inactiveButtonClass);
@@ -41,12 +47,6 @@ export class FormValidator {
       buttonElement.classList.remove(this.#settings.inactiveButtonClass);
       buttonElement.removeAttribute("disabled");
     }
-  }
-
-  #hasInvalidInput(inputList) {
-    return inputList.some((inputElement) => {
-      return !inputElement.validity.valid;
-    });
   }
 
   #setEventListeners() {

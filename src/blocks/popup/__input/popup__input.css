@@ -23,12 +23,9 @@
   border-color: green;
 }
 
-.popup__input_type:invalid {
+/*.popup__input_type:invalid {
   border-color: red;
-}
-.popup__input_type {
-  border-color: red;
-}
+}*/
 
 @media screen and (max-width: 894px) {
   .popup__input {

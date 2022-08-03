@@ -61,8 +61,8 @@ const validationConfig = {
   inputSelector: '.popup__input',
   submitButtonSelector: '.popup__button',
   inputTypingClass: 'popup__input_type',
-  inputErrorClass: 'popup__input-error',
-  errorClass: 'popup__input-error_active',
+  inputErrorClass: 'popup__input_type-error', 
+  errorClass: 'popup__input-error_active',  // span ошибки
   formSelector: '.popup__content',
 };
 
