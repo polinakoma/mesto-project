@@ -6,7 +6,7 @@ export class Api {
     this._url = config.url;
     this._headers = config.headers;
   }
-
+  //Загрузка информации о пользователе с сервера
   getUserInfo() {
   return fetch(`${this._url}/users/me`, {
       method: 'GET',
@@ -14,7 +14,7 @@ export class Api {
     })
     .then((res) => this.#onResponse(res));
   }
-
+  // Загрузка карточек с сервера
   getAllCards() {
   return fetch(`${this._url}/cards`, {
       method: 'GET',
@@ -22,7 +22,7 @@ export class Api {
     })
     .then((res) => this.#onResponse(res));
   };
-
+  // Контролер общей загрузки
   allUploadInfo() {
   return Promise.all([this.getAllCards(), this.getUserInfo()])
   }
@@ -43,7 +43,7 @@ export class Api {
     })
     .then((res) => this.#onResponse(res));
   }
- 
+  // Добавление новой карточки
   postCard(data) {
   return fetch(`${this._url}/cards`, {
       method: 'POST',

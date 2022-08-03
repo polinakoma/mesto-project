@@ -46,9 +46,11 @@ export class Card {
 
     this._setEventListeners();
 
+    // Возвращает готовую наполненную данными карточку
     return this._card;
   }
 
+  // Навешивает корзинку
   _putDeleteSign() {
     this._cardDeleteBin = this._card.querySelector(".grid__bin");
 
@@ -60,10 +62,11 @@ export class Card {
   }
 
   _setEventListeners() {
+    // Удаление
     this._cardDeleteBin.addEventListener("click", () => {
       this._handleDeleteClick(this._id);
     });
-
+    // Лайк
     this._likeButton.addEventListener("click", () => {
       if (this._likeButton.classList.contains("grid__like-button_active")) {
         this._handleDeleteLike(this._id);
@@ -71,7 +74,7 @@ export class Card {
         this._handlePutLike(this._id);
       }
     });
-
+    // Зум
     this._cardImage.addEventListener("click", () => {
       this._handleZoomClick(this._name, this._link);
     });
@@ -103,5 +106,3 @@ export class Card {
     this._card = null;
   }
 }
-
-
