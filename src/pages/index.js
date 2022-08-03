@@ -1,40 +1,22 @@
 import "./index.css";
 
 import {
-  avatarForm,
-  avatarInput,
-  avatarPopup,
-  avatarSubmitButton,
-  cardFormInput,
-  cardPopup,
   cardPopupExitButton,
-  cardPopupInputLink,
-  cardPopupInputTitle,
-  cardSubmitButton,
-  cardsContainer,
   closeAvatarProfile,
-  imagePopup,
   imagePopupExitButton,
-  initialCards,
-  jobInfo,
   jobInput,
   myFoto,
-  nameInfo,
   nameInput,
   profileAddButton,
   profileAvatar,
   profileEditButton,
-  profileForm,
-  profilePopup,
   profileResetButton,
-  profileSubmitButton,
   validationConfig,
 } from "../utils/Constans.js";
 
 import { Api } from "../components/Api.js";
 import { Card } from "../components/Card.js";
 import { FormValidator } from "../components/FormValidator.js";
-import { Popup } from "../components/Popup.js";
 import { PopupWithForm } from "../components/PopupWithForm.js";
 import { PopupWithImage } from "../components/PopupWithImage.js";
 import { Section } from "../components/Section.js";
@@ -68,8 +50,7 @@ api
   .allUploadInfo()
   .then(([cards, user]) => {
     userInfo.setUserInfo(user);
-    userInfo.updateUserInfo();
-    // не забыть исправить аватар
+    userInfo.updateUserInfo(user);
     myFoto.src = user.avatar;
     profileId = user._id;
 
@@ -138,12 +119,6 @@ const cardsSection = new Section(
   ".grid"
 );
 
-const popup = new Popup(".popup");
-popup.setEventListeners();
-
-/*____________________________________________*/
-
-// валидация
 const editAvatarPopup = new PopupWithForm({
   popupSelector: "#avatar_popup",
   callbackSubmitForm: (data) => {

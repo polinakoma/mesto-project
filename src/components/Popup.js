@@ -28,13 +28,4 @@ export class Popup {
       };
     })
   }
-
-  renderLoading (isLoading) {
-    if(isLoading) {
-      this._submitButton = this._popup.querySelector('.popup__button');
-      this._submitButton.textContent = 'Сохранение...';
-    } else {
-      this._submitButton.textContent = 'Сохранить';
-    }
-  }
 }
