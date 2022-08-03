@@ -14,9 +14,14 @@ import { validationConfig, showInputError, hideInputError, isValid, setEventList
   toggleButtonState, enableValidation, disableButton } from '../components/validate.js';
 
 // рендеринг карточек
-import { Card } from '../components/Card.js';
-import { Section } from '../components/Section.js';
-import { Api } from '../components/Api.js'
+import { Api } from "../components/Api.js";
+import { Card } from "../components/Card.js";
+import { FormValidator } from "../components/FormValidator.js";
+import { Popup } from "../components/Popup.js";
+import { PopupWithForm } from "../components/PopupWithForm.js";
+import { PopupWithImage } from "../components/PopupWithImage.js";
+import { Section } from "../components/Section.js";
+import { UserInfo } from "../components/UserInfo.js";
 import { data } from 'autoprefixer';
 
 
@@ -26,6 +31,18 @@ const api = new Api({
     authorization: "5c5cae68-2e6e-4cb2-b8b7-784782ac63e0",
     "Content-Type": "application/json",
   },
+});
+
+
+const userInfo = new UserInfo({
+  profileNameSelector: ".profile__name",
+  profileInfoSelector: ".profile__description",
+});
+
+const popupZoomCard = new PopupWithImage("#image_popup");
+popupZoomCard.setEventListeners();
+imagePopupExitButton.addEventListener("click", function () {
+  popupZoomCard.close();
 });
 
 
