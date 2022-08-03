@@ -5,7 +5,7 @@ import { profilePopup, cardPopup, cardFormInput, profileForm, profileEditButton,
   jobInput, nameInfo, jobInfo, initialCards, validationConfig, cardZoom, cardTitleZoom, cardTemplate, profileAvatar, 
   avatarPopup, closeAvatarProfile } from '../utils/constans.js';
 
-import { getAllCards, allUploadInfo, postCard, getUserInfo, editProfile, deleteCard, changeLikeStatus } from './api.js'
+import { Api } from './Api.js'
 
 import { handleChangeLikeStatus } from '../pages/index.js'
 

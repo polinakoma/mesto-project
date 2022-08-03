@@ -17,9 +17,21 @@ import { validationConfig, showInputError, hideInputError, isValid, setEventList
 import { handleClickImage, createCard, updateLikes } from '../components/card.js';
 
 // промисы на функционал карточек с сервера
-import { getAllCards, postCard, getUserInfo, allUploadInfo, editProfile, deleteCard, changeLikeStatus, 
-editAvatar } from '../components/api.js'
+import { Api } from '../components/Api.js'
 import { data } from 'autoprefixer';
+
+
+const api = new Api({
+  url: "https://nomoreparties.co/v1/plus-cohort-13",
+  headers: {
+    authorization: "5c5cae68-2e6e-4cb2-b8b7-784782ac63e0",
+    "Content-Type": "application/json",
+  },
+});
+
+
+
+
 
 // Функция подтягивания информации со страницы
 function handleProfileFormInfo() {
@@ -28,7 +40,7 @@ function handleProfileFormInfo() {
 };
 
 const handleChangeLikeStatus = (cardId, isLiked, cardElement, userId) => {
-  changeLikeStatus(cardId, isLiked)
+  api.changeLikeStatus(cardId, isLiked)
   .then((dataFromServer) => {
     updateLikes(cardElement, dataFromServer.likes, userId);
   })
@@ -45,7 +57,7 @@ const renderCard = function (data, container, userId) {
 
 let userId = null;
 
-allUploadInfo()
+api.allUploadInfo()
 .then(([cards, user]) => {
   nameInfo.textContent = user.name;
   jobInfo.textContent = user.about;
@@ -72,7 +84,7 @@ const renderLoading = function(isLoading, button) {
 function handleProfileFormSubmit (evt) {
   evt.preventDefault(); 
   renderLoading(true, profileSubmitButton);
-  editProfile({name: nameInput.value, about: jobInput.value})
+  api.editProfile({name: nameInput.value, about: jobInput.value})
   .then((dataFromServer) => {
     nameInfo.textContent = dataFromServer.name;
     jobInfo.textContent =  dataFromServer.about;
@@ -90,7 +102,7 @@ function handleProfileFormSubmit (evt) {
 function changeAvatar() {
   renderLoading(true, avatarSubmitButton);
   disableButton(avatarSubmitButton, validationConfig);
-  editAvatar({ avatar: avatarInput.value})
+  api.editAvatar({ avatar: avatarInput.value})
   .then((dataFromServer) => {
     myFoto.src = avatarInput.value
     console.log(`Ура! Новая аватарка ${dataFromServer.avatar}`)
@@ -109,7 +121,7 @@ const addCard = function(evt) {
   renderLoading(true, cardSubmitButton);
   disableButton(cardSubmitButton, validationConfig);
   evt.preventDefault();
-  postCard({ name: cardPopupInputTitle.value, link: cardPopupInputLink.value, userId })
+  api.postCard({ name: cardPopupInputTitle.value, link: cardPopupInputLink.value, userId })
   .then((dataFromServer) => {
    renderCard(dataFromServer, cardsContainer, userId);
    cardFormInput.reset();

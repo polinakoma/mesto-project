@@ -1,88 +1,77 @@
-//Общая функция проверки промиса
-function onResponse(res) {
+export class Api {
+  #onResponse(res) {
     return res.ok ? res.json() : Promise.reject('Error data load')
-};
+  };
+  constructor(config) {
+    this._url = config.url;
+    this._headers = config.headers;
+  }
 
-const config = {
-  url: "https://nomoreparties.co/v1/plus-cohort-13",
-  headers: {
-    authorization: "5c5cae68-2e6e-4cb2-b8b7-784782ac63e0",
-    'Content-Type': 'application/json',
-  },
-}
-
-//1. Загрузка информации о пользователе с сервера
-function getUserInfo() {
-    return fetch(`${config.url}/users/me`, {
-        method: 'GET',
-        headers: config.headers,
-      })
-      .then((res) => onResponse(res));
-}
-
-//2. Загрузка карточек с сервера
-function getAllCards() {
-    return fetch(`${config.url}/cards`, {
+  getUserInfo() {
+  return fetch(`${this._url}/users/me`, {
       method: 'GET',
-      headers: config.headers,
+      headers: this._headers,
     })
-    .then((res) => onResponse(res));
-};
+    .then((res) => this.#onResponse(res));
+  }
 
+  getAllCards() {
+  return fetch(`${this._url}/cards`, {
+      method: 'GET',
+      headers: this._headers,
+    })
+    .then((res) => this.#onResponse(res));
+  };
 
-// контролер общей загрузки
-function allUploadInfo() {
-    return Promise.all([getAllCards(), getUserInfo()])
-}
-
-//3. Редактирование профиля
-function editProfile(data) {
-    return fetch(`${config.url}/users/me`, {
+  allUploadInfo() {
+  return Promise.all([this.getAllCards(), this.getUserInfo()])
+  }
+  
+  editProfile(data) {
+  return fetch(`${this._url}/users/me`, {
       method: 'PATCH',
-      headers: config.headers,
+      headers: this._headers,
       body: JSON.stringify(data)
     })
-    .then((res) => onResponse(res));
-}
-
-// Изменение аватара
-function editAvatar(data) {
-  return fetch(`${config.url}/users/me/avatar`, {
-    method: 'PATCH',
-    headers: config.headers,
-    body: JSON.stringify(data)
-  })
-  .then((res) => onResponse(res));
-}
-
-//4. Добавление новой карточки
-function postCard(data) {
-    return fetch(`${config.url}/cards`, {
+    .then((res) => this.#onResponse(res));
+  }
+  editAvatar(data) {
+  return fetch(`${this._url}/users/me/avatar`, {
+      method: 'PATCH',
+      headers: this._headers,
+      body: JSON.stringify(data)
+    })
+    .then((res) => this.#onResponse(res));
+  }
+ 
+  postCard(data) {
+  return fetch(`${this._url}/cards`, {
       method: 'POST',
-      headers: config.headers,
+      headers: this._headers,
       body: JSON.stringify(data)
     })
-    .then((res) => onResponse(res));
-}
-
-//5. Удаление карточки
-function deleteCard(dataCardId) {
-    return fetch(`${config.url}/cards/${dataCardId}`, {
+    .then((res) => this.#onResponse(res));
+  }
+  deleteCard(dataCardId) {
+  return fetch(`${this._url}/cards/${dataCardId}`, {
       method: 'DELETE',
-      headers: config.headers,
+      headers: this._headers,
     })
-    .then((res) => onResponse(res));
-}
+    .then((res) => this.#onResponse(res));
+  }
+  putLike(cardId) {
+  return fetch(`${this._url}/cards/likes/${cardId}`, {
+      method: 'PUT',
+      headers: this._headers,
+    })
+    .then((res) => this.#onResponse(res));
+  }
 
-//добавление и снятие лайка с тер оператором
-function changeLikeStatus(cardId, isLike) {
- return fetch(`${config.url}/cards/likes/${cardId}`, {
-    method: isLike ? "DELETE" : "PUT",
-    headers: config.headers,
-  })
-  .then((res) => onResponse(res));
+  deleteLike(cardId) {
+    return fetch(`${this._url}/cards/likes/${cardId}`, {
+        method: 'DELETE',
+        headers: this._headers,
+      })
+      .then((res) => this.#onResponse(res));
+    }
 }
-
-export { getAllCards, allUploadInfo, postCard, getUserInfo, editProfile, deleteCard, 
-  changeLikeStatus, editAvatar }
-    
