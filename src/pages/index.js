@@ -50,7 +50,6 @@ api
   .allUploadInfo()
   .then(([cards, user]) => {
     userInfo.setUserInfo(user);
-    userInfo.updateUserInfo(user);
     myFoto.src = user.avatar;
     profileId = user._id;
 
@@ -142,7 +141,6 @@ const editAvatarPopup = new PopupWithForm({
 const avatarFormValidator = new FormValidator(
   validationConfig,
   document.forms.avatar,
-  '#avatar_profile_exit'
 );
 
 avatarFormValidator.enableValidation();
@@ -180,7 +178,6 @@ const editProfilePopup = new PopupWithForm({
 const profileFormValidator = new FormValidator(
   validationConfig,
   document.forms.profile,
-  '#profile_submit-button'
 );
 
 profileFormValidator.enableValidation();
@@ -220,7 +217,6 @@ const postCardPopup = new PopupWithForm({
 const cardFormValidator = new FormValidator(
   validationConfig,
   document.forms.card,
-  '#cards-adding_popup_exit'
 );
 
 cardFormValidator.enableValidation();

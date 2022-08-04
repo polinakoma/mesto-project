@@ -1,14 +1,18 @@
 export class FormValidator {
   #settings;
   #formElement;
+  #inputList;
+  #buttonElement;
 
-  constructor(outerSettings, formElement, buttonElement) {
+  constructor(outerSettings, formElement) {
     this.#settings = outerSettings;
     this.#formElement = formElement;
-    this._inputList = this._inputList = Array.from(
+    this.#inputList = this.#inputList = Array.from(
       this.#formElement.querySelectorAll(this.#settings.inputSelector)
     );
-    this._buttonElement = document.querySelector(buttonElement);
+    this.#buttonElement = this.#formElement.querySelector(
+      this.#settings.submitButtonSelector
+    );
   }
 
   #showInputError(inputElement, errorMessage) {
@@ -38,29 +42,25 @@ export class FormValidator {
   }
 
   #hasInvalidInput() {
-    return this._inputList.some((inputElement) => {
+    return this.#inputList.some((inputElement) => {
       return !inputElement.validity.valid;
-      
     });
   }
 
   #toggleButtonState() {
     if (this.#hasInvalidInput()) {
-      this._buttonElement.classList.add(this.#settings.inactiveButtonClass);
-      this._buttonElement.setAttribute("disabled", true);
+      this.#buttonElement.classList.add(this.#settings.inactiveButtonClass);
+      this.#buttonElement.setAttribute("disabled", true);
     } else {
-      this._buttonElement.classList.remove(this.#settings.inactiveButtonClass);
-      this._buttonElement.removeAttribute("disabled");
+      this.#buttonElement.classList.remove(this.#settings.inactiveButtonClass);
+      this.#buttonElement.removeAttribute("disabled");
     }
   }
 
   #setEventListeners() {
-    this._buttonElement = this.#formElement.querySelector(
-      this.#settings.submitButtonSelector
-    );
     this.#toggleButtonState();
 
-    this._inputList.forEach((inputElement) => {
+    this.#inputList.forEach((inputElement) => {
       inputElement.addEventListener("input", () => {
         this.#isValid(inputElement);
         inputElement.classList.add(this.#settings.inputTypingClass);
@@ -77,5 +77,4 @@ export class FormValidator {
     this.#setEventListeners();
   }
 }
-
 
