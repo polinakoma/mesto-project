@@ -1,17 +1,14 @@
 import "./index.css";
 
 import {
-  cardPopupExitButton,
-  closeAvatarProfile,
-  imagePopupExitButton,
   jobInput,
-  myFoto,
   nameInput,
   profileAddButton,
   profileAvatar,
   profileEditButton,
-  profileResetButton,
   validationConfig,
+  avatarForm,
+  cardForm
 } from "../utils/Constans.js";
 
 import { Api } from "../components/Api.js";
@@ -38,9 +35,6 @@ const userInfo = new UserInfo({
 
 const popupZoomCard = new PopupWithImage("#image_popup");
 popupZoomCard.setEventListeners();
-imagePopupExitButton.addEventListener("click", function () {
-  popupZoomCard.close();
-});
 
 // заводим переменную
 let profileId;
@@ -50,9 +44,8 @@ api
   .allUploadInfo()
   .then(([cards, user]) => {
     userInfo.setUserInfo(user);
-    myFoto.src = user.avatar;
+    profileAvatar.src = user.avatar;
     profileId = user._id;
-
     cardsSection.renderItems(cards);
   })
   .catch((err) => {
@@ -112,11 +105,13 @@ const cardsSection = new Section(
     renderer: function (item) {
       const initialCard = getFullCard(item);
       const cardElement = initialCard.createCard(item, profileId);
-      cardsSection.addItem(cardElement);
+      cardsSection.addItemAppend(cardElement);
     },
   },
   ".grid"
 );
+
+/*____________________________________________*/
 
 const editAvatarPopup = new PopupWithForm({
   popupSelector: "#avatar_popup",
@@ -143,17 +138,15 @@ const avatarFormValidator = new FormValidator(
   document.forms.avatar,
 );
 
-avatarFormValidator.enableValidation();
-
 editAvatarPopup.setEventListeners();
 
-closeAvatarProfile.addEventListener("click", function () {
-  editAvatarPopup.close();
-});
-
-myFoto.addEventListener("click", function () {
+profileAvatar.addEventListener("click", function () {
+  avatarForm.reset();
+  avatarFormValidator.enableValidation();
   editAvatarPopup.open();
 });
+
+/*___________________________________________*/
 
 const editProfilePopup = new PopupWithForm({
   popupSelector: "#profile_popup",
@@ -163,7 +156,6 @@ const editProfilePopup = new PopupWithForm({
       .editProfile(data)
       .then((data) => {
         userInfo.setUserInfo(data);
-        userInfo.updateUserInfo();
         editProfilePopup.close();
       })
       .catch((err) => {
@@ -190,10 +182,8 @@ profileEditButton.addEventListener("click", function () {
   nameInput.value = getUserInfo.name;
   jobInput.value = getUserInfo.about;
 });
-profileResetButton.addEventListener("click", function () {
-  editProfilePopup.close();
-});
 
+/*_________________________________________*/
 
 const postCardPopup = new PopupWithForm({
   popupSelector: "#card_popup",
@@ -202,7 +192,7 @@ const postCardPopup = new PopupWithForm({
     api
       .postCard(data)
       .then((data) => {
-        cardsSection.addItem(getFullCard(data).createCard(data, profileId));
+        cardsSection.addItemAppend(getFullCard(data).createCard(data, profileId));
         postCardPopup.close();
       })
       .catch((err) => {
@@ -219,13 +209,10 @@ const cardFormValidator = new FormValidator(
   document.forms.card,
 );
 
-cardFormValidator.enableValidation();
-
 postCardPopup.setEventListeners();
 
 profileAddButton.addEventListener("click", function () {
+  cardForm.reset();
+  cardFormValidator.enableValidation();
   postCardPopup.open();
-});
-cardPopupExitButton.addEventListener("click", function () {
-  postCardPopup.close();
 });

@@ -9,7 +9,11 @@ export class Section {
     items.forEach((item) => this._renderer(item));
   }
   // вставка карточки в ноду
-  addItem(element) {
+  addItemPrepend(element) {
     this._container.prepend(element);
+  }
+
+  addItemAppend(element) {
+    this._container.append(element);
   }
 }

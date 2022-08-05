@@ -23,6 +23,7 @@ export class Popup {
   setEventListeners() {
     this._popup.addEventListener('mousedown', (evt) => {
       if(evt.target.classList.contains('popup__container') || 
+      evt.target.classList.contains('popup__exit-zoom') || 
       evt.target.classList.contains('popup__exit')) { 
         this.close();
       };
