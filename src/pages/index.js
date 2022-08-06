@@ -192,7 +192,7 @@ const postCardPopup = new PopupWithForm({
     api
       .postCard(data)
       .then((data) => {
-        cardsSection.addItemAppend(getFullCard(data).createCard(data, profileId));
+        cardsSection.addItemPrepend(getFullCard(data).createCard(data, profileId));
         postCardPopup.close();
       })
       .catch((err) => {
