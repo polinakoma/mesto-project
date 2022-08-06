@@ -68,6 +68,12 @@ export class FormValidator {
         this.#toggleButtonState();
       });
     });
+    this.#formElement.addEventListener("reset", (evt) => {
+      this.#inputList.forEach((inputElement) => {
+        inputElement.value = null;
+      });
+      this.#toggleButtonState();
+    });
   }
 
   enableValidation() {

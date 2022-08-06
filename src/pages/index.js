@@ -138,11 +138,12 @@ const avatarFormValidator = new FormValidator(
   document.forms.avatar,
 );
 
+avatarFormValidator.enableValidation();
+
 editAvatarPopup.setEventListeners();
 
 profileAvatar.addEventListener("click", function () {
   avatarForm.reset();
-  avatarFormValidator.enableValidation();
   editAvatarPopup.open();
 });
 
@@ -209,10 +210,11 @@ const cardFormValidator = new FormValidator(
   document.forms.card,
 );
 
+cardFormValidator.enableValidation();
+
 postCardPopup.setEventListeners();
 
 profileAddButton.addEventListener("click", function () {
   cardForm.reset();
-  cardFormValidator.enableValidation();
   postCardPopup.open();
 });
