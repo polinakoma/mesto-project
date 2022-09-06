@@ -1,166 +1,220 @@
-import './index.css'; 
+import "./index.css";
 
-//константы
-import { profilePopup, cardPopup, cardFormInput, profileForm, profileEditButton, profileAddButton, profileResetButton, 
-cardPopupExitButton, imagePopupExitButton, imagePopup, cardPopupInputLink, cardPopupInputTitle, cardsContainer, nameInput, 
-jobInput, nameInfo, jobInfo, initialCards, profileAvatar, avatarPopup, closeAvatarProfile, myFoto, avatarForm, 
-avatarInput, profileSubmitButton, cardSubmitButton, avatarSubmitButton } from '../utils/constans.js'
+import {
+  jobInput,
+  nameInput,
+  profileAddButton,
+  profileAvatar,
+  profileEditButton,
+  validationConfig,
+  avatarForm,
+  cardForm
+} from "../utils/Constans.js";
 
-//закрытие модальных окон
-import { openPopup, closePopup, closePopupByOverlay, closePopupByEscape } from '../components/modal.js';
+import { Api } from "../components/Api.js";
+import { Card } from "../components/Card.js";
+import { FormValidator } from "../components/FormValidator.js";
+import { PopupWithForm } from "../components/PopupWithForm.js";
+import { PopupWithImage } from "../components/PopupWithImage.js";
+import { Section } from "../components/Section.js";
+import { UserInfo } from "../components/UserInfo.js";
+import { data } from "autoprefixer";
 
-// валидация формы
-import { validationConfig, showInputError, hideInputError, isValid, setEventListeners, hasInvalidInput,
-  toggleButtonState, enableValidation, disableButton } from '../components/validate.js';
-
-// рендеринг карточек
-import { handleClickImage, createCard, updateLikes } from '../components/card.js';
-
-// промисы на функционал карточек с сервера
-import { getAllCards, postCard, getUserInfo, allUploadInfo, editProfile, deleteCard, changeLikeStatus, 
-editAvatar } from '../components/api.js'
-import { data } from 'autoprefixer';
-
-// Функция подтягивания информации со страницы
-function handleProfileFormInfo() {
-  nameInput.value = nameInfo.textContent;
-  jobInput.value = jobInfo.textContent;
-};
-
-const handleChangeLikeStatus = (cardId, isLiked, cardElement, userId) => {
-  changeLikeStatus(cardId, isLiked)
-  .then((dataFromServer) => {
-    updateLikes(cardElement, dataFromServer.likes, userId);
-  })
-  .catch((err) => {
-    console.log(`Лайк не поставлени. Ошибка ${err}`);
-  })
-}
-
-//Общая функция на рендер картинок
-const renderCard = function (data, container, userId) { 
-  const card = createCard(data, userId, handleChangeLikeStatus); 
-  container.prepend(card); 
-};
-
-let userId = null;
-
-allUploadInfo()
-.then(([cards, user]) => {
-  nameInfo.textContent = user.name;
-  jobInfo.textContent = user.about;
-  myFoto.src = user.avatar;
-  userId = user._id;
-
-  cards.forEach(function(item) {
-    renderCard(item, cardsContainer, userId)
-  })
-})
-.catch((err) => {
-  console.log(`Ошибка загрузки данных ${err}`);
+const api = new Api({
+  url: "https://nomoreparties.co/v1/plus-cohort-13",
+  headers: {
+    authorization: "5c5cae68-2e6e-4cb2-b8b7-784782ac63e0",
+    "Content-Type": "application/json",
+  },
 });
 
-const renderLoading = function(isLoading, button) {
-  if(isLoading) {
-    button.textContent = 'Сохранение...';
-  } else {
-    button.textContent = 'Сохранить';
-  }
-}
-
-// Функция переписи значений в профайле
-function handleProfileFormSubmit (evt) {
-  evt.preventDefault(); 
-  renderLoading(true, profileSubmitButton);
-  editProfile({name: nameInput.value, about: jobInput.value})
-  .then((dataFromServer) => {
-    nameInfo.textContent = dataFromServer.name;
-    jobInfo.textContent =  dataFromServer.about;
-    closePopup(profilePopup);
-    console.log(`Данные ${dataFromServer.name} обновлены`)
-  })
-  .catch((err) => {
-    console.log(`Ошибка ${err}`);
-  })
-  .finally(() => {
-    renderLoading(false, profileSubmitButton);
-  })
-};
-
-function changeAvatar() {
-  renderLoading(true, avatarSubmitButton);
-  disableButton(avatarSubmitButton, validationConfig);
-  editAvatar({ avatar: avatarInput.value})
-  .then((dataFromServer) => {
-    myFoto.src = avatarInput.value
-    console.log(`Ура! Новая аватарка ${dataFromServer.avatar}`)
-    avatarForm.reset()
-    closePopup(avatarPopup);
-  })
-  .catch((err) => {
-    console.log(err)
-  })
-  .finally(() => {
-    renderLoading(false, avatarSubmitButton);
-  })
-}
-
-const addCard = function(evt) {
-  renderLoading(true, cardSubmitButton);
-  disableButton(cardSubmitButton, validationConfig);
-  evt.preventDefault();
-  postCard({ name: cardPopupInputTitle.value, link: cardPopupInputLink.value, userId })
-  .then((dataFromServer) => {
-   renderCard(dataFromServer, cardsContainer, userId);
-   cardFormInput.reset();
-   closePopup(cardPopup);
-  })
-  .catch((err) => {
-    console.log(`Ошибка ${err}`);
-  })
-  .finally(() => {
-    renderLoading(false, cardSubmitButton)
-  })
-}
-
-//При нажатии на сохранить значения уйдут в профайл
-profileForm.addEventListener('submit', handleProfileFormSubmit);
-
-profileEditButton.addEventListener('click', function() {
-  openPopup(profilePopup);
-  handleProfileFormInfo();
+const userInfo = new UserInfo({
+  profileNameSelector: ".profile__name",
+  profileInfoSelector: ".profile__description",
 });
 
-profileAddButton.addEventListener('click', function() {
-openPopup(cardPopup);
-});
+const popupZoomCard = new PopupWithImage("#image_popup");
+popupZoomCard.setEventListeners();
 
-myFoto.addEventListener('click', function() {
-  openPopup(avatarPopup);
-  toggleButtonState(inputList, buttonElement, config)
+// заводим переменную
+let profileId;
+
+// единовременная загрузка данных карточек и пользователя
+api
+  .allUploadInfo()
+  .then(([cards, user]) => {
+    userInfo.setUserInfo(user);
+    profileAvatar.src = user.avatar;
+    profileId = user._id;
+    cardsSection.renderItems(cards);
+  })
+  .catch((err) => {
+    console.log(err);
   });
 
-profileResetButton.addEventListener('click', function() {
-  closePopup(profilePopup);
+// формируем карточку, наполняем данными
+const getFullCard = (item) => {
+  const card = new Card(
+    item,
+    {
+      handleZoomClick: () => {
+        popupZoomCard.open(item);
+      },
+
+      handleDeleteClick: () => {
+        api
+          .deleteCard(card.getCardId())
+          .then(() => {
+            card.removeCard();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+
+      handlePutLike: () => {
+        api
+          .putLike(card.getCardId())
+          .then((res) => {
+            card.likeCardOption(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+      handleDeleteLike: () => {
+        api
+          .deleteLike(card.getCardId())
+          .then((res) => {
+            card.likeCardOption(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+    },
+    "#card_template",
+    profileId
+  );
+  return card;
+};
+
+// размещвем картинки на странице
+const cardsSection = new Section(
+  {
+    renderer: function (item) {
+      const initialCard = getFullCard(item);
+      const cardElement = initialCard.createCard(item, profileId);
+      cardsSection.addItemAppend(cardElement);
+    },
+  },
+  ".grid"
+);
+
+/*____________________________________________*/
+
+const editAvatarPopup = new PopupWithForm({
+  popupSelector: "#avatar_popup",
+  callbackSubmitForm: (data) => {
+    editAvatarPopup.renderLoading(true);
+    api
+      .editAvatar(data)
+
+      .then((data) => {
+        profileAvatar.src = data.avatar;
+        editAvatarPopup.close();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        editAvatarPopup.renderLoading(false);
+      });
+  },
 });
 
-cardPopupExitButton.addEventListener('click', function() {
-  closePopup(cardPopup);
+const avatarFormValidator = new FormValidator(
+  validationConfig,
+  document.forms.avatar,
+);
+
+avatarFormValidator.enableValidation();
+
+editAvatarPopup.setEventListeners();
+
+profileAvatar.addEventListener("click", function () {
+  avatarForm.reset();
+  editAvatarPopup.open();
 });
 
-imagePopupExitButton.addEventListener('click', function() {
-  closePopup(imagePopup);
+/*___________________________________________*/
+
+const editProfilePopup = new PopupWithForm({
+  popupSelector: "#profile_popup",
+  callbackSubmitForm: (data) => {
+    editProfilePopup.renderLoading(true);
+    api
+      .editProfile(data)
+      .then((data) => {
+        userInfo.setUserInfo(data);
+        editProfilePopup.close();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        editProfilePopup.renderLoading(false);
+      });
+  },
 });
 
-closeAvatarProfile.addEventListener('click', function() {
-  closePopup(avatarPopup);
+const profileFormValidator = new FormValidator(
+  validationConfig,
+  document.forms.profile,
+);
+
+profileFormValidator.enableValidation();
+
+editProfilePopup.setEventListeners();
+
+profileEditButton.addEventListener("click", function () {
+  editProfilePopup.open();
+  const getUserInfo = userInfo.getUserInfo();
+  nameInput.value = getUserInfo.name;
+  jobInput.value = getUserInfo.about;
 });
 
-avatarForm.addEventListener('submit', changeAvatar)
+/*_________________________________________*/
 
-cardFormInput.addEventListener('submit', addCard);
+const postCardPopup = new PopupWithForm({
+  popupSelector: "#card_popup",
+  callbackSubmitForm: (data) => {
+    postCardPopup.renderLoading(true);
+    api
+      .postCard(data)
+      .then((data) => {
+        cardsSection.addItemPrepend(getFullCard(data).createCard(data, profileId));
+        postCardPopup.close();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        postCardPopup.renderLoading(false);
+      });
+  },
+});
 
-enableValidation(validationConfig);
+const cardFormValidator = new FormValidator(
+  validationConfig,
+  document.forms.card,
+);
 
-export { handleChangeLikeStatus }
+cardFormValidator.enableValidation();
 
+postCardPopup.setEventListeners();
+
+profileAddButton.addEventListener("click", function () {
+  cardForm.reset();
+  postCardPopup.open();
+});
